@@ -41,3 +41,25 @@ if __name__ == '__main__':
     plt.title('Speed vs Time')
     plt.legend(loc='best', prop={'size': 18})
     t = 3
+    mpx = np.array(pos_ned[0, :])  # x position from GNSS
+    mpy = np.array(pos_ned[1, :])  # y position from GNSS
+
+    # Generate GPS Trigger
+    counter = len(t_imu[11:])
+
+    GPS = np.ndarray((counter), dtype='bool')
+    new_mpx = np.ndarray(counter)  # I want to start at 0.11 (same as the first GNSS signal)
+    new_mpy = np.ndarray(counter)
+
+    GPS[0] = True
+    new_mpx[0] = mpx[0]
+    new_mpy[0] = mpy[0]
+
+    # Less new position updates
+    for i in range(1,counter):
+        if i % 100 == 0:
+            GPS[i] = True
+        else:
+            new_mpx[i] = mpx[i // 100]
+            new_mpy[i] = mpy[i // 100]
+            GPS[i] = False
